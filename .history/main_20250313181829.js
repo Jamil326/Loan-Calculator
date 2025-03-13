@@ -42,7 +42,6 @@
         if (inputInput === inputRate) grate = inputValue;
         if (inputInput === inputTime) gtime = inputValue;
 
-      
       doCalculate(gAmount,grate,gtime);
     });
 
@@ -87,7 +86,7 @@ class Calculate{
 
     getInterest(){
        
-        const int = this.getTotalPaid()-this.amount;
+        const int = 12*this.getEmi()-this.amount;
         return int.toFixed(2);
         
     }
@@ -123,12 +122,7 @@ interest.textContent =cal.getInterest();
 total.textContent = cal.getTotalPaid();
 
 }
-
-syncInputs(inputAmount,rangeAmount,'input');
-syncInputs(inputRate,rangeRate,'input');
-syncInputs(inputTime,rangeTime,'input');
-
-
+ 
 
 
 

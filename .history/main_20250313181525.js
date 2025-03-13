@@ -42,7 +42,6 @@
         if (inputInput === inputRate) grate = inputValue;
         if (inputInput === inputTime) gtime = inputValue;
 
-      
       doCalculate(gAmount,grate,gtime);
     });
 
@@ -55,7 +54,8 @@
         if (rangeSlider === rangeAmount) gAmount = rangeSliderValue;
         if (rangeSlider === rangeRate) grate = rangeSliderValue;
         if (rangeSlider === rangeTime) gtime = rangeSliderValue;
-        doCalculate(gAmount,grate,gtime);
+
+        console.log("Updated via range slider:", gAmount, grate, gtime);
     });
 };
 
@@ -87,7 +87,7 @@ class Calculate{
 
     getInterest(){
        
-        const int = this.getTotalPaid()-this.amount;
+        const int = 12*this.getEmi()-this.amount;
         return int.toFixed(2);
         
     }
@@ -123,12 +123,19 @@ interest.textContent =cal.getInterest();
 total.textContent = cal.getTotalPaid();
 
 }
+ 
+const called = () =>{
+  let a = syncInputs(inputAmount,rangeAmount,eventType='input');
+  let b = syncInputs(inputRate,rangeRate,eventType='input');
+  let c = syncInputs(inputTime,rangeTime,eventType='input');
+  
+  console.log(a);
+  console.log(b);
+  console.log(c);
 
-syncInputs(inputAmount,rangeAmount,'input');
-syncInputs(inputRate,rangeRate,'input');
-syncInputs(inputTime,rangeTime,'input');
-
-
+}
+ 
+ called();
 
 
 

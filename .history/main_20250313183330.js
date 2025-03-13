@@ -87,7 +87,7 @@ class Calculate{
 
     getInterest(){
        
-        const int = this.getTotalPaid()-this.amount;
+        const int = this.getTotalPaid()-this.
         return int.toFixed(2);
         
     }

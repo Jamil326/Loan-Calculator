@@ -31,33 +31,71 @@
 
 
     // make input function 
-      const syncInputs = (inputInput, rangeSlider, eventType = 'input') => {
+       const syncInputs = (inputInput, rangeSlider, eventType = 'input') => {
+           let temp = 0;
+      
+   
+
     // Add event listener for the input element
     inputInput.addEventListener(eventType, () => {
-        let inputValue = parseInt(inputInput.value, 10) || 0;
-        rangeSlider.value = inputValue; // Sync slider with input
-
-        // Update global variables correctly
-        if (inputInput === inputAmount) gAmount = inputValue;
-        if (inputInput === inputRate) grate = inputValue;
-        if (inputInput === inputTime) gtime = inputValue;
-
       
-      doCalculate(gAmount,grate,gtime);
+       let inputValue = parseInt (inputInput.value);
+       let sliderValue = parseInt(rangeSlider.value);
+       rangeSlider.value = inputInput.value;
+        rangeSliderValue = inputValue;
+        
+       if(inputInput === inputAmount){
+               return    gAmount = inputValue;
+
+       }
+        
+       if(inputInput === inputRate) {
+         return grate = inputValue;
+       }
+       if(inputInput === inputTime){
+         return  gtime = inputValue;
+       } 
+
+
+    
+
+       
+    
+        
+        
+       // doCalculate(inputAmount.value,inputRate.value,inputTime); 
     });
 
     // Add event listener for the range slider element
     rangeSlider.addEventListener(eventType, () => {
-        let rangeSliderValue = parseInt(rangeSlider.value, 10) || 0;
-        inputInput.value = rangeSliderValue; // Sync input with slider
+      let  rangeSliderValue = parseInt(rangeSlider.value);
+      let inputInputValue = parseInt(rangeSlider.value);
+      inputInput.value = rangeSlider.value;
+      inputInputValue = rangeSliderValue;
 
-        // Update global variables correctly
-        if (rangeSlider === rangeAmount) gAmount = rangeSliderValue;
-        if (rangeSlider === rangeRate) grate = rangeSliderValue;
-        if (rangeSlider === rangeTime) gtime = rangeSliderValue;
-        doCalculate(gAmount,grate,gtime);
+       if(inputInput === rangeAmount) {
+         return  gAmount = rangeSliderValue;
+       } 
+       if(inputInput === rangeRate){
+           return grate = rangeRateValue;
+       } 
+       if(inputInput === rangeTime) {
+           gtime = rangeSliderValue;
+       }
+       
+
+
+       
+          
+
+        
     });
+        
+
 };
+
+    
+
 
     
      
@@ -87,7 +125,7 @@ class Calculate{
 
     getInterest(){
        
-        const int = this.getTotalPaid()-this.amount;
+        const int = 12*this.getEmi()-this.amount;
         return int.toFixed(2);
         
     }
@@ -123,12 +161,17 @@ interest.textContent =cal.getInterest();
 total.textContent = cal.getTotalPaid();
 
 }
+ 
+const called = () =>{
+  let a = syncInputs(inputAmount,rangeAmount,eventType='input');
+  let b = syncInputs(inputRate,rangeRate,eventType='input');
+  let c = syncInputs(inputTime,rangeTime,eventType='input');
+  
+  console.log(a);
 
-syncInputs(inputAmount,rangeAmount,'input');
-syncInputs(inputRate,rangeRate,'input');
-syncInputs(inputTime,rangeTime,'input');
-
-
+}
+ 
+ called();
 
 
 

@@ -1,15 +1,5 @@
 // elementsVlue
-    let inputAmountValue =parseInt(document.getElementById('input-amount').value,10) ;
-    let inputRateValue = parseInt( document.getElementById('input-rate').value,10);
-    let inputTimeValue = parseInt( document.getElementById('input-time').value,10);
-
-    
-
-
-    let rangeAmountValue = parseInt( document.getElementById('amount').value,10);
-    let rangeRateValue = parseInt(document.getElementById('rate').value,10);
-    let rangeTimeValue = parseInt(document.getElementById('time').value,10);
-
+  
     // elements
     let inputAmount = document.getElementById('input-amount');
     let inputRate =   document.getElementById('input-rate');
@@ -31,33 +21,37 @@
 
 
     // make input function 
-      const syncInputs = (inputInput, rangeSlider, eventType = 'input') => {
+       const syncInputs = (inputInput, rangeSlider, eventType = 'input') => {
+    // Check if both elements exist
+   
+
     // Add event listener for the input element
     inputInput.addEventListener(eventType, () => {
-        let inputValue = parseInt(inputInput.value, 10) || 0;
-        rangeSlider.value = inputValue; // Sync slider with input
-
-        // Update global variables correctly
-        if (inputInput === inputAmount) gAmount = inputValue;
-        if (inputInput === inputRate) grate = inputValue;
-        if (inputInput === inputTime) gtime = inputValue;
-
-      
-      doCalculate(gAmount,grate,gtime);
+       let inputValue = parseInt (inputInput.value);
+       let sliderValue = parseInt(rangeSlider.value);
+        rangeSliderValue = inputValue;
+        console.log(parseInt(rangeSliderValue));
+        console.log(typeof rangeSliderValue);
+       // doCalculate(inputAmount.value,inputRate.value,inputTime); 
     });
 
     // Add event listener for the range slider element
     rangeSlider.addEventListener(eventType, () => {
-        let rangeSliderValue = parseInt(rangeSlider.value, 10) || 0;
-        inputInput.value = rangeSliderValue; // Sync input with slider
+      let  rangleSliderValue = parseInt(rangeSlider.value);
+      let inputInputValue = parseInt(rangeSlider.value);
+      inputInputValue = rangleSliderValue;
 
-        // Update global variables correctly
-        if (rangeSlider === rangeAmount) gAmount = rangeSliderValue;
-        if (rangeSlider === rangeRate) grate = rangeSliderValue;
-        if (rangeSlider === rangeTime) gtime = rangeSliderValue;
-        doCalculate(gAmount,grate,gtime);
+      console.log(inputInputValue);
+      console.log(typeof inputInputValue);
+
+       
+      
+       
     });
 };
+
+    
+
 
     
      
@@ -87,7 +81,7 @@ class Calculate{
 
     getInterest(){
        
-        const int = this.getTotalPaid()-this.amount;
+        const int = 12*this.getEmi()-this.amount;
         return int.toFixed(2);
         
     }
@@ -102,13 +96,17 @@ class Calculate{
      }
 }
 
-
+const cal = new Calculate(inputAmount.value,inputRate,inputTime);
 // let man = cal.getEmi();
 
+console.log(cal.getInterest());
+console.log(cal.getTotalPaid());
+console.log(cal.getEmi());
+console.log(cal.getAllTransaction());
 
-const  doCalculate =  (amount,rate,time) =>{
+const doCalculate = (amount,rate,time) =>{
 
-const cal = new Calculate(amount,rate,time);
+const cal = new Calculate(gAmount,grate,gtime);
 console.log(cal.getEmi());
 console.log(cal.getInterest());
 console.log(cal.getTotalPaid());
@@ -124,14 +122,24 @@ total.textContent = cal.getTotalPaid();
 
 }
 
-syncInputs(inputAmount,rangeAmount,'input');
-syncInputs(inputRate,rangeRate,'input');
-syncInputs(inputTime,rangeTime,'input');
+const rendered = (gAmount,grate,gtime) =>{
+    
+    doCalculate(gAmount,grate,gtime);
+    console.log('rendered running')
+    console.log(gAmount,grate,gtime);
+
+}
+
+btn.addEventListener('click',() =>{
+    rendered(gAmount,grate,gtime);
+    console.log(' btn sclick');
+});
 
 
 
-
-
+    syncInputs(inputAmount,rangeAmount,eventType='input');
+    syncInputs(inputRate,rangeRate,eventType='input');
+    syncInputs(inputTime,rangeTime,eventType='input');
 
 
 

@@ -43,7 +43,7 @@
         if (inputInput === inputTime) gtime = inputValue;
 
       
-      doCalculate(gAmount,grate,gtime);
+      console.log(gAmount,grate,gtime);
     });
 
     // Add event listener for the range slider element
@@ -87,7 +87,7 @@ class Calculate{
 
     getInterest(){
        
-        const int = this.getTotalPaid()-this.amount;
+        const int = 12*this.getEmi()-this.amount;
         return int.toFixed(2);
         
     }

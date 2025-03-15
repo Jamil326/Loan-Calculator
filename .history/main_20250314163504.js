@@ -1,0 +1,198 @@
+
+
+    // elements inputs
+    let inputAmount = document.getElementById('input-amount');
+    let inputRate =   document.getElementById('input-rate');
+    let inputTime =  document.getElementById('input-time');
+    const btn = document.querySelectorAll('.scrollTo');
+    btn.forEach(btns =>{
+        btns.addEventListener('click' , () => {
+            document.getElementById('emiContainer').scrollIntoView({behavior:"smooth"});
+        })
+    });
+
+     // elements of ange slide
+    let rangeAmount =  document.getElementById('amount');
+    let rangeRate =  document.getElementById('rate');
+    let rangeTime = document.getElementById('time');
+
+    // global  variable or state variable
+    let globalAmount = 0;
+    let globalrate = 0;
+    let globaltime = 0;
+    let selectedType = 'bar';
+    let myChart = null;
+
+    
+
+
+    // make input function 
+      const syncInputs = (inputInput, rangeSlider, eventType = 'input') => {
+    // Add event listener for the input element
+    inputInput.addEventListener(eventType, () => {
+        let inputValue = parseInt(inputInput.value, 10) || 0;
+        rangeSlider.value = inputValue; // Sync slider with input
+
+        // Update global variables correctly
+        if (inputInput === inputAmount) globalAmount = inputValue;
+        if (inputInput === inputRate) globalrate = inputValue;
+        if (inputInput === inputTime) globaltime = inputValue;
+            doCalculate(globalAmount,globalrate,globaltime);
+    
+    });
+
+    // Add event listener for the range slider element
+    rangeSlider.addEventListener(eventType, () => {
+        let rangeSliderValue = parseInt(rangeSlider.value, 10) || 0;
+        inputInput.value = rangeSliderValue; // Sync input with slider
+
+        // Update global variables correctly
+        if (rangeSlider === rangeAmount) globalAmount = rangeSliderValue;
+        if (rangeSlider === rangeRate) globalrate = rangeSliderValue;
+        if (rangeSlider === rangeTime) globaltime = rangeSliderValue;
+            doCalculate(globalAmount,globalrate,globaltime);
+    });
+};
+
+    // go to calculator container emi directly
+    // make class for Calculation
+
+class Calculate{
+    constructor(amount,rate,time){
+        this.amount = amount;
+        this.rate = rate;
+        this.time = time;
+        this.transactions=[];
+    }
+
+    getEmi(){
+        const monthlyRate =this.rate/1200;
+        const tenure =12*this.time;
+        const upper = this.amount*monthlyRate*(Math.pow(1+monthlyRate,tenure));
+        const lower = (Math.pow(1+monthlyRate,tenure)-1);
+        const result = upper/lower;
+        return result.toFixed(2);
+    }
+
+    getInterest(){
+       
+        const int = this.getTotalPaid()-this.amount;
+        return int.toFixed(2);
+        
+    }
+
+     getTotalPaid(){
+         const total = this.getEmi()*this.time*12;
+         return total.toFixed(2);
+     }
+
+     getAllTransaction(){
+         return {emi:this.getEmi(),totalInterst:this.getInterest(),totalpaid:this.getTotalPaid()}
+     }
+}
+
+// function to calculate get emis interest and principal,
+const  doCalculate =  (amount,rate,time) =>{
+   let sets = [];
+   let labels = [];
+if(!amount && !rate && !time){
+    console.log('no value');
+    return ;
+}
+const cal = new Calculate(amount,rate,time);
+
+// DOM updates
+emi.textContent = '₹'+' '+cal.getEmi();
+interest.textContent = '₹'+" "+cal.getInterest();
+total.textContent = '₹'+' '+cal.getTotalPaid();
+
+sets.push(cal.getEmi(),cal.getInterest(),cal.getTotalPaid());
+labels.push('emi','totalInterst','totalpaid');
+
+  render(sets,labels,myChart);
+
+
+
+}
+
+// function for chart creation and updates
+const charts = {}; // Store chart instances globally
+
+const createOrUpdateChart = (datas, typeOfChart, labels, elementId) => {
+    const ele = document.getElementById(elementId).getContext('2d');
+
+    // Check if a chart already exists for this element
+    if (charts[elementId]) {
+        charts[elementId].data.labels = labels;
+        charts[elementId].data.datasets[0].data = datas;
+        charts[elementId].update(); // Update the existing chart
+    } else {
+        // Create a new chart if none exists
+        charts[elementId] = new Chart(ele, {
+            type: typeOfChart,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Dataset', // Can be dynamic
+                    data: datas,
+                    borderColor: 'rgba(75, 192, 192, 1)', // Example color
+                    backgroundColor: ['red','yellow','green'],
+                    fill: false
+                }]
+            }
+        });
+    }
+};
+
+const render = (datas,labels,elementId) =>{
+let typed = document.getElementById('select-wrapper');
+    typed.addEventListener('input', (e) => {
+        if(e.target.tagN !== 'select'){
+
+        if(e.target.value !=='Select type of chart'){
+            
+            selectedType = e.target.value;
+
+            if(myChart !==null){
+                myChart.destroy();
+            }
+            
+           createOrUpdateChart(datas,selectedType,labels,'myChart');
+
+            
+
+            }
+             }
+
+              createOrUpdateChart(datas,selectedType,labels,'myChart');
+
+
+    })
+
+}
+
+
+ 
+
+
+syncInputs(inputAmount,rangeAmount,'input');
+syncInputs(inputRate,rangeRate,'input');
+syncInputs(inputTime,rangeTime,'input');
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+

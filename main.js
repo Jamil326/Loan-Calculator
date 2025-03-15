@@ -1,32 +1,32 @@
-// elementsVlue
-    let inputAmountValue =parseInt(document.getElementById('input-amount').value,10) ;
-    let inputRateValue = parseInt( document.getElementById('input-rate').value,10);
-    let inputTimeValue = parseInt( document.getElementById('input-time').value,10);
-
-    
 
 
-    let rangeAmountValue = parseInt( document.getElementById('amount').value,10);
-    let rangeRateValue = parseInt(document.getElementById('rate').value,10);
-    let rangeTimeValue = parseInt(document.getElementById('time').value,10);
-
-    // elements
+    // elements inputs
     let inputAmount = document.getElementById('input-amount');
     let inputRate =   document.getElementById('input-rate');
     let inputTime =  document.getElementById('input-time');
+    const btn = document.querySelectorAll('.scrollTo');
+    btn.forEach(btns =>{
+        btns.addEventListener('click' , () => {
+            document.getElementById('emiContainer').scrollIntoView({behavior:"smooth"});
+        })
+    });
 
-
+     // elements of ange slide
     let rangeAmount =  document.getElementById('amount');
     let rangeRate =  document.getElementById('rate');
     let rangeTime = document.getElementById('time');
 
-
+    // global  variable or state variable
+    let globalAmount = 0;
+    let globalrate = 0;
+    let globaltime = 0;
+    let selectedType = 'bar';
+    let myChart = ['myChart','myChart2'];
+    
+    let chartOptions = ['select-wrapper','select-wrapper2'];
     
 
 
-    let gAmount = 0;
-    let grate = 0;
-    let gtime = 0;
     
 
 
@@ -38,12 +38,13 @@
         rangeSlider.value = inputValue; // Sync slider with input
 
         // Update global variables correctly
-        if (inputInput === inputAmount) gAmount = inputValue;
-        if (inputInput === inputRate) grate = inputValue;
-        if (inputInput === inputTime) gtime = inputValue;
+        if (inputInput === inputAmount) globalAmount = inputValue;
+        if (inputInput === inputRate) globalrate = inputValue;
+        if (inputInput === inputTime) globaltime = inputValue;
+            doCalculate(globalAmount,globalrate,globaltime);
+              
 
-      
-      doCalculate(gAmount,grate,gtime);
+    
     });
 
     // Add event listener for the range slider element
@@ -52,20 +53,16 @@
         inputInput.value = rangeSliderValue; // Sync input with slider
 
         // Update global variables correctly
-        if (rangeSlider === rangeAmount) gAmount = rangeSliderValue;
-        if (rangeSlider === rangeRate) grate = rangeSliderValue;
-        if (rangeSlider === rangeTime) gtime = rangeSliderValue;
-        doCalculate(gAmount,grate,gtime);
+        if (rangeSlider === rangeAmount) globalAmount = rangeSliderValue;
+        if (rangeSlider === rangeRate) globalrate = rangeSliderValue;
+        if (rangeSlider === rangeTime) globaltime = rangeSliderValue;
+            doCalculate(globalAmount,globalrate,globaltime);
+              
+
     });
 };
 
-    
-     
-
-
-
-
-
+    // go to calculator container emi directly
     // make class for Calculation
 
 class Calculate{
@@ -82,51 +79,172 @@ class Calculate{
         const upper = this.amount*monthlyRate*(Math.pow(1+monthlyRate,tenure));
         const lower = (Math.pow(1+monthlyRate,tenure)-1);
         const result = upper/lower;
-        return result.toFixed(2);
+        return parseInt(result);
     }
 
     getInterest(){
        
         const int = this.getTotalPaid()-this.amount;
-        return int.toFixed(2);
+        return parseInt(int);
         
     }
 
      getTotalPaid(){
          const total = this.getEmi()*this.time*12;
-         return total.toFixed(2);
+         return parseInt(total);
      }
 
      getAllTransaction(){
-         return {emi:this.getEmi(),totalInterst:this.getInterest(),totalpaid:this.getTotalPaid()}
+         return {emi:this.getEmi(),totalInterest:this.getInterest(),totalpaid:this.getTotalPaid(),amount:this.amount}
      }
+
+
+     getEmiBreakDown(){
+          let balance = parseInt(this.amount);
+          let monthTenure =parseInt(this.time*12);
+          let principal ,interest;
+          let emi =this.getEmi();
+          let monthlyRate = parseFloat(this.rate/1200);
+          
+          
+          for(let  month =1 ; month <= monthTenure; month++ ) {
+              interest = balance*monthlyRate;
+              principal = emi-interest;
+              if(principal>balance){
+                   balance=principal;
+              }
+              balance-=principal;
+
+              this.transactions.push({
+                emi:emi,interest:Math.floor(interest),principal:Math.floor(principal),balance:Math.floor(balance)
+              });
+
+            if (balance<=0) {
+               balance = 0;
+               break; 
+            }
+          }
+           
+          return this.transactions;
+
+
+     }
+
+     
 }
 
-
-// let man = cal.getEmi();
-
-
+// function to calculate get emis interest and principal,
 const  doCalculate =  (amount,rate,time) =>{
-
+   let sets = [];
+   let labels = [];
+   let sets2 = [];
+   let labels2 = [];
+   
+if(!amount && !rate && !time){
+    console.log('no value');
+    return ;
+}
 const cal = new Calculate(amount,rate,time);
-console.log(cal.getEmi());
-console.log(cal.getInterest());
-console.log(cal.getTotalPaid());
+let datass = cal.getAllTransaction();
+
+console.log(cal.getEmiBreakDown());
+
+// DOM updates
+emi.textContent = '₹'+' '+datass.emi;
+interest.textContent = '₹'+" "+datass.totalInterest;
+total.textContent = '₹'+' '+datass.totalpaid;
+
+sets.push(cal.getEmi(),cal.getInterest(),cal.getTotalPaid());
+labels.push('emi','totalInterst','totalpaid');
+sets2.push(amount,cal.getTotalPaid());
+labels2.push('amount','total repayment');
 
 
+  render(sets,labels,myChart[0],chartOptions[0]);
+  render(sets2,labels2,myChart[1],chartOptions[1]);
 
 
-
-
-emi.textContent =cal.getEmi();
-interest.textContent =cal.getInterest();
-total.textContent = cal.getTotalPaid();
 
 }
+
+// function for chart creation and updates
+const charts = {}; // Store chart instances globally
+
+const createOrUpdateChart = (datas, typeOfChart, labels, elementId) => {
+    const canvas = document.getElementById(elementId);
+    const ctx = canvas.getContext('2d');
+
+    // Destroy existing chart if type is different
+    if (charts[elementId]) {
+        if (charts[elementId].config.type !== typeOfChart) {
+            charts[elementId].destroy();
+            charts[elementId] = null;
+        }
+    }
+
+    // Create new chart if none exists
+    if (!charts[elementId]) {
+        charts[elementId] = new Chart(ctx, {
+            type: typeOfChart,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Dataset',
+                    data: datas,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor:['tomato',' #41BE8B','#7d4cb3'],
+                    fill: false
+                }]
+            }
+        });
+    } else {
+        // Update data if type is the same
+        charts[elementId].data.labels = labels;
+        charts[elementId].data.datasets[0].data = datas;
+        charts[elementId].update();
+    }
+}
+const render = (datas,labels,elementId,chartOptions) =>{
+    
+let typed = document.getElementById(chartOptions);
+    typed.addEventListener('input', (e) => {
+        if(e.target.tagName === 'SELECT'){
+
+        if(e.target.value !=='Select type of chart'){
+            
+            selectedType = e.target.value;
+
+            if(charts[elementId]){
+                charts[elementId].destroy();
+                charts[elementId] = null;
+                        
+                    
+                }
+            
+           createOrUpdateChart(datas,selectedType,labels,elementId);
+
+            
+
+            }
+             }
+
+
+
+    })
+
+}
+
+
+ 
+
 
 syncInputs(inputAmount,rangeAmount,'input');
 syncInputs(inputRate,rangeRate,'input');
 syncInputs(inputTime,rangeTime,'input');
+
+
+
+
 
 
 

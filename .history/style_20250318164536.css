@@ -6,7 +6,7 @@
     box-sizing: border-box;
 }
 
-
+body
 
 #back{  
 background-image: url('./assets/handshake.jpg');
@@ -16,7 +16,6 @@ object-fit: scale-down;
 background-size: cover;
 background-position: center;
 border-radius: 6px;
-
 
 
 }

@@ -6,17 +6,15 @@
     box-sizing: border-box;
 }
 
-
-
 #back{  
 background-image: url('./assets/handshake.jpg');
+load
 height: 100vh;
 width: 100%;
 object-fit: scale-down;
 background-size: cover;
 background-position: center;
 border-radius: 6px;
-
 
 
 }

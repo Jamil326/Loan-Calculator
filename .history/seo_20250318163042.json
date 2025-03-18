@@ -7,6 +7,7 @@
   "provider": {
     "@type": "Organization",
     "name": "Your EMI Calculator",
-    "url": "https://emicalculations.netlify.app"
+    "url": "https://emicalculations.netlify.app
+"
   }
 }

@@ -1,0 +1,12 @@
+{
+  "@context": "https://schema.org",
+  "@type": "FinancialProduct",
+  "name": "EMI Calculator - Home, Car & Personal Loan",
+  "description": "Calculate EMI for home loans, car loans, and personal loans. Get detailed loan breakdowns and repayment schedules instantly.",
+  "url": "http://localhost:3000", 
+  "provider": {
+    "@type": "Organization",
+    "name": "Your EMI Calculator",
+    "url": "http://localhost:3000"
+  }
+}
